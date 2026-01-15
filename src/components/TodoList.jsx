@@ -52,12 +52,15 @@ const TodoList = () => {
         const todos = useStore((state) => state.todos);
         const toggleTodo = useStore((state) => state.toggleTodo);
         const removeTodo = useStore((state) => state.removeTodo);
+        const sortedTodos = [...todos].sort((a, b) => {
+        if (a.done === b.done) return 0; // Om båda är lika, gör inget
+        return a.done ? 1 : -1;          // Om a är klar, knuffa ner den (return 1)
+    });
     
-
     return(
         <ListContainer>
 
-            <ListWrapper>{todos.map((todo) => (  //map through every todo in the list 
+            <ListWrapper>{sortedTodos.map((todo) => (  //map through every todo in the list 
                 <ListItem key={todo.id}>
                     <Text
                     $completed={todo.done} 
