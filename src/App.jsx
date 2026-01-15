@@ -9,7 +9,6 @@ const AppContainer = styled.div`
   align-items: center;    
   min-height: 100vh;    
   padding-top: 100px;     
-  background-color: #bd2525;
 `
 
 export const App = () => {
