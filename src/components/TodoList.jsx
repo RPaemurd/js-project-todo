@@ -7,6 +7,7 @@ const ListContainer = styled.div`
   justify-content: center;
   width: 100%;
   margin-top: 1rem;
+  padding: 0 10px; 
 `;
 
 const ListWrapper = styled.ul`
@@ -18,30 +19,66 @@ const ListWrapper = styled.ul`
 `;
 
 const ListItem = styled(motion.li)`
-  padding: 15px 40px; 
+  background: transparent;
+  padding: 12px 10px; 
   margin-bottom: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
+  align-items: center; 
+  gap: 10px;          
   border-bottom: 1px solid rgba(0,0,0,0.05);
+
+  
+  @media (min-width: 600px) {
+    padding: 15px 40px; 
+    gap: 20px;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
-  gap: 10px; 
+  gap: 8px;
   align-items: center;
+  flex-shrink: 0;
+
+  @media (min-width: 600px) {
+    gap: 10px;
+  }
 `;
 
 const Text = styled.span`
+  /* --- GRUNDSTIL (Gäller både Mobil och Desktop) --- */
   cursor: pointer;
-  text-align: center;
-  font-size: 18px;
-  text-decoration: ${props => props.$completed ? 'line-through' : 'none'};
-  color: ${props => props.$completed ? '#aaa' : '#333'};
-  flex-grow: 1; 
-  transition: color 0.2s ease;
+  font-size: 16px;
   text-align: left;
+  word-break: break-word;
+  flex-grow: 1;
+
+  /* --- SETUP FÖR LINJE-ANIMATIONEN --- */
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 50%;
+  background-repeat: no-repeat;
+  
+  /* Linjens bredd (0% eller 100%) */
+  background-size: ${props => props.$completed ? '100%' : '0%'} 2px;
+
+  /* --- SJÄLVA ANIMATIONEN --- */
+  /* Denna regel gäller NU för alla skärmstorlekar */
+  transition: ${props => props.$completed 
+    ? 'background-size 0.6s ease-in-out, color 0.2s ease-in-out 0.6s' 
+    : 'background-size 0s, color 0s'};
+
+  /* Färgval */
+  color: ${props => props.$completed ? '#aaa' : '#333'};
+
+  /* --- DESKTOP-JUSTERINGAR --- */
+  @media (min-width: 600px) {
+    font-size: 18px; 
+    
+    /* VIKTIGT: Här får INTE finnas någon 'transition: ...' rad!
+       Om det gör det, skriver den över animationen ovan.
+       Nu har jag bara font-size här, så det är säkert. */
+  }
 `;
 
 const BaseButton = styled.button`
@@ -54,29 +91,37 @@ const BaseButton = styled.button`
   align-items: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 16px;
+  font-size: 14px; 
   border: 1px solid #ddd;
+  flex-shrink: 0;
+
+  @media (min-width: 600px) {
+    font-size: 16px;
+  }
 `;
 
 const CheckButton = styled(BaseButton)`
-  left: 0; 
   background-color: ${props => props.$done ? '#475140e5' : ''};
   color: ${props => props.$done ? '#28a745' : '#ccc'};
 
-  &:hover {
-    background: #d4edda;
-    border-color: #28a745;
-    color: #28a745;
+ @media (hover: hover) { /* the hoover effect only activates if there is a cursur, on desktop */
+    &:hover {
+      background: #d4edda;
+      border-color: #28a745;
+      color: #28a745;
+    }
   }
 `;
 
 const TrashButton = styled(BaseButton)`
   color: #ccc;
 
-  &:hover {
-    background: #fd9494;
-    border-color: #ff4d4d;
-    color: #ff4d4d;     
+  @media (hover: hover) {
+    &:hover {
+      background: #fd9494;
+      border-color: #ff4d4d;
+      color: #ff4d4d;     
+    }
   }
 `;
 
@@ -102,24 +147,28 @@ const TodoList = () => {
                             stiffness: 100,
                             damping: 15,
                             mass: 1
-                        }}>
+                        }}
+                    >
                     
                     <ButtonGroup>
-                    <CheckButton 
-                        onClick={() => toggleTodo(todo.id)}
-                        $done={todo.done}> 
-                        &#10003; 
-                    </CheckButton>
+                        <CheckButton 
+                            onClick={() => toggleTodo(todo.id)}
+                            $done={todo.done}
+                        > 
+                            &#10003; 
+                        </CheckButton>
 
-                    {!todo.done && ( 
-                    <TrashButton onClick={() => removeTodo(todo.id)}>
-                    &#10005; 
-                    </TrashButton>
-                    )}
+                        {!todo.done && ( 
+                            <TrashButton onClick={() => removeTodo(todo.id)}>
+                                &#10005; 
+                            </TrashButton>
+                        )}
                     </ButtonGroup>
+
                     <Text
                         $completed={todo.done} 
-                        onClick={() => toggleTodo(todo.id)}>
+                        onClick={() => toggleTodo(todo.id)}
+                    >
                         {todo.text}
                     </Text>
                     
