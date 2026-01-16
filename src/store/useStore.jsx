@@ -1,7 +1,6 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware' // <--- 1. Ny import här!
+import { persist } from 'zustand/middleware' 
 
-// 2. Vi använder persist(...) runt hela vår funktion
 const useStore = create(
   persist(
     (set) => ({
@@ -30,7 +29,7 @@ const useStore = create(
       }))
     }),
     {
-      name: 'todo-storage', // <--- 3. Ett unikt namn för var datan ska sparas i webbläsaren
+      name: 'todo-storage', 
     }
   )
 )

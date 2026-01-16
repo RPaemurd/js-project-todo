@@ -1,22 +1,29 @@
+import GlobalStyles from "./styles/globalStyles.js";
+import Header from "./components/Header";
 import TodoInput from "./components/TodoInput"
 import TodoList from "./components/TodoList"
 import styled from "styled-components"
 
-const AppContainer = styled.div`
-
+const Main = styled.div`
   display: flex;
   flex-direction: column; 
   align-items: center;    
   min-height: 100vh;    
-  padding-top: 100px;     
-`
+  padding-top: 100px;
+  width: 100%;
+`;
 
-export const App = () => {
+const App = () => {
   return (
-    <AppContainer>
-      <h1>My Todo App</h1>
+    <> 
+    <GlobalStyles />
+    <Main>
+      <Header />
       <TodoInput />
       <TodoList />
-    </AppContainer>
-  )
+    </Main>
+    </>
+  );
 }
+
+export default App

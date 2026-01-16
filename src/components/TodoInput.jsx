@@ -2,7 +2,7 @@ import { useState } from "react";
 import useStore from "../store/useStore";
 import styled from "styled-components";
 
-const Wrapper = styled.section `
+const Wrapper = styled.form `
 
         display: flex;
         justify-content: center; 
@@ -10,26 +10,55 @@ const Wrapper = styled.section `
         gap: 10px;               
     `;
 
+const StyledInput = styled.input`
+    background: transparent;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #3a393888;
+    font-size: 16px;
+    width: 250px;
+
+    &:focus {
+        outline: none;
+    }
+`;
+
+const Button = styled.button`
+    padding: 10px 20px;
+    background-color: #475140;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: darkblue;
+    }
+`;
+
 const TodoInput = () => {
     const [text, setText] = useState('')
     const addTodo = useStore((state) => state.addTodo);
 
+    const handleSubmit = (e) => { //adds a new todo by pressing enter and the button
+        e.preventDefault(); //stops the site from reloading
+
+        if (!text.trim()) return;
+        addTodo(text);
+        setText('');
+    }
 
     return(
-        <Wrapper>
-            <input
+        <Wrapper onSubmit={handleSubmit}>
+            <StyledInput
             type="text" 
             value={text}
             onChange={(e) => setText(e.target.value)} //event - updates the state
-            placeholder="What do you want to do?"
-            />
-             {/* the input controlls react, the input field should show insde the text variable */}
-            <button onClick={() => 
-                {addTodo(text); //sends the text to the store
-                setText(''); //empty the text after the onclick
-            }}>
-            Add Todo
-            </button> 
+            placeholder="What do you want to do?"/>
+            <Button type="submit">
+            Add
+            </Button> 
         </Wrapper>
     )
 };

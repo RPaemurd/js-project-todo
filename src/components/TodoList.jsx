@@ -1,77 +1,128 @@
 import useStore from "../store/useStore";
 import styled from "styled-components";
+import { motion } from "framer-motion";
 
-    const ListContainer = styled.div`
-        display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-top: 20px;
-    `;
+const ListContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 1rem;
+`;
 
-    const ListWrapper = styled.ul`
-    list-style: none;
-    padding: 0;
-    width: 100%;
-    max-width: 400px;
-    `;
+const ListWrapper = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 500px;
+`;
 
-    const ListItem = styled.li`
-    background: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    `;
+const ListItem = styled(motion.li)`
+  padding: 15px 40px; 
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+`;
 
-    const Text = styled.span`
-    cursor: pointer;
-    text-decoration: ${props => props.$completed ? 'line-through' : 'none'};
-    color: ${props => props.$completed ? '#888' : '#000'};
-    flex-grow: 1; /* Gör att texten tar upp all plats som blir över */
-    `;
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px; 
+  align-items: center;
+`;
 
-    const DeleteButton = styled.button`
-    background: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-left: 10px;
-  
-    &:hover {
-    background: #cc0000;
-    }
-    `;
+const Text = styled.span`
+  cursor: pointer;
+  text-align: center;
+  font-size: 18px;
+  text-decoration: ${props => props.$completed ? 'line-through' : 'none'};
+  color: ${props => props.$completed ? '#aaa' : '#333'};
+  flex-grow: 1; 
+  transition: color 0.2s ease;
+  text-align: left;
+`;
+
+const BaseButton = styled.button`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #75746ee1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  border: 1px solid #ddd;
+`;
+
+const CheckButton = styled(BaseButton)`
+  left: 0; 
+  background-color: ${props => props.$done ? '#475140e5' : ''};
+  color: ${props => props.$done ? '#28a745' : '#ccc'};
+
+  &:hover {
+    background: #d4edda;
+    border-color: #28a745;
+    color: #28a745;
+  }
+`;
+
+const TrashButton = styled(BaseButton)`
+  color: #ccc;
+
+  &:hover {
+    background: #fd9494;
+    border-color: #ff4d4d;
+    color: #ff4d4d;     
+  }
+`;
 
 const TodoList = () => {
-
-        const todos = useStore((state) => state.todos);
-        const toggleTodo = useStore((state) => state.toggleTodo);
-        const removeTodo = useStore((state) => state.removeTodo);
-        const sortedTodos = [...todos].sort((a, b) => {
-        if (a.done === b.done) return 0; // Om båda är lika, gör inget
-        return a.done ? 1 : -1;          // Om a är klar, knuffa ner den (return 1)
+    const todos = useStore((state) => state.todos);
+    const toggleTodo = useStore((state) => state.toggleTodo);
+    const removeTodo = useStore((state) => state.removeTodo);
+    
+    const sortedTodos = [...todos].sort((a, b) => {
+        if (a.done === b.done) return 0;
+        return a.done ? 1 : -1;
     });
     
     return(
         <ListContainer>
-
-            <ListWrapper>{sortedTodos.map((todo) => (  //map through every todo in the list 
-                <ListItem key={todo.id}>
-                    <Text
-                    $completed={todo.done} 
+            <ListWrapper>
+                {sortedTodos.map((todo) => (
+                <ListItem 
+                        key={todo.id}
+                        layout 
+                        transition={{
+                            type: "spring",
+                            stiffness: 100,
+                            damping: 15,
+                            mass: 1
+                        }}>
+                    
+                    <ButtonGroup>
+                    <CheckButton 
                         onClick={() => toggleTodo(todo.id)}
-                    >
+                        $done={todo.done}> 
+                        &#10003; 
+                    </CheckButton>
+
+                    {!todo.done && ( 
+                    <TrashButton onClick={() => removeTodo(todo.id)}>
+                    &#10005; 
+                    </TrashButton>
+                    )}
+                    </ButtonGroup>
+                    <Text
+                        $completed={todo.done} 
+                        onClick={() => toggleTodo(todo.id)}>
                         {todo.text}
                     </Text>
-                        {/* Here we use the id we created before */}
-                    <DeleteButton onClick={() => removeTodo(todo.id)}>
-                        Radera
-                    </DeleteButton>
+                    
                 </ListItem>
             ))}
             </ListWrapper>
@@ -79,4 +130,4 @@ const TodoList = () => {
     )
 }
 
-export default TodoList
+export default TodoList;
