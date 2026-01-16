@@ -46,38 +46,28 @@ const ButtonGroup = styled.div`
 `;
 
 const Text = styled.span`
-  /* --- GRUNDSTIL (Gäller både Mobil och Desktop) --- */
   cursor: pointer;
   font-size: 16px;
   text-align: left;
   word-break: break-word;
   flex-grow: 1;
 
-  /* --- SETUP FÖR LINJE-ANIMATIONEN --- */
   text-decoration: none;
   background-image: linear-gradient(currentColor, currentColor);
   background-position: 0 50%;
   background-repeat: no-repeat;
   
-  /* Linjens bredd (0% eller 100%) */
   background-size: ${props => props.$completed ? '100%' : '0%'} 2px;
 
-  /* --- SJÄLVA ANIMATIONEN --- */
-  /* Denna regel gäller NU för alla skärmstorlekar */
+  /* --- ANIMATIONEN --- */
   transition: ${props => props.$completed 
     ? 'background-size 0.6s ease-in-out, color 0.2s ease-in-out 0.6s' 
     : 'background-size 0s, color 0s'};
 
-  /* Färgval */
   color: ${props => props.$completed ? '#aaa' : '#333'};
 
-  /* --- DESKTOP-JUSTERINGAR --- */
   @media (min-width: 600px) {
     font-size: 18px; 
-    
-    /* VIKTIGT: Här får INTE finnas någon 'transition: ...' rad!
-       Om det gör det, skriver den över animationen ovan.
-       Nu har jag bara font-size här, så det är säkert. */
   }
 `;
 
