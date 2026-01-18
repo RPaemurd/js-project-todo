@@ -1,6 +1,7 @@
 import useStore from "../store/useStore";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import EmptyState from "./EmptyState"; 
 
 const ListContainer = styled.div`
   display: flex;
@@ -27,7 +28,6 @@ const ListItem = styled(motion.li)`
   gap: 10px;          
   border-bottom: 1px solid rgba(0,0,0,0.05);
 
-  
   @media (min-width: 600px) {
     padding: 15px 40px; 
     gap: 20px;
@@ -56,10 +56,8 @@ const Text = styled.span`
   background-image: linear-gradient(currentColor, currentColor);
   background-position: 0 50%;
   background-repeat: no-repeat;
-  
   background-size: ${props => props.$completed ? '100%' : '0%'} 2px;
 
-  /* --- ANIMATIONEN --- */
   transition: ${props => props.$completed 
     ? 'background-size 0.6s ease-in-out, color 0.2s ease-in-out 0.6s' 
     : 'background-size 0s, color 0s'};
@@ -94,7 +92,7 @@ const CheckButton = styled(BaseButton)`
   background-color: ${props => props.$done ? '#475140e5' : ''};
   color: ${props => props.$done ? '#28a745' : '#ccc'};
 
- @media (hover: hover) { /* the hoover effect only activates if there is a cursur, on desktop */
+  @media (hover: hover) {
     &:hover {
       background: #d4edda;
       border-color: #28a745;
@@ -124,48 +122,55 @@ const TodoList = () => {
         if (a.done === b.done) return 0;
         return a.done ? 1 : -1;
     });
-    
-    return(
-        <ListContainer>
-            <ListWrapper>
-                {sortedTodos.map((todo) => (
-                <ListItem 
-                        key={todo.id}
-                        layout 
-                        transition={{
-                            type: "spring",
-                            stiffness: 100,
-                            damping: 15,
-                            mass: 1
-                        }}
-                    >
-                    
-                    <ButtonGroup>
-                        <CheckButton 
-                            onClick={() => toggleTodo(todo.id)}
-                            $done={todo.done}
-                        > 
-                            &#10003; 
-                        </CheckButton>
 
-                        {!todo.done && ( 
-                            <TrashButton onClick={() => removeTodo(todo.id)}>
-                                &#10005; 
-                            </TrashButton>
-                        )}
-                    </ButtonGroup>
-
-                    <Text
-                        $completed={todo.done} 
-                        onClick={() => toggleTodo(todo.id)}
-                    >
-                        {todo.text}
-                    </Text>
-                    
-                </ListItem>
-            ))}
-            </ListWrapper>
+    if (todos.length === 0) {
+        return (
+            <ListContainer>
+              <EmptyState />
         </ListContainer>
+    );
+  }
+    
+return(
+  <ListContainer>
+    <ListWrapper>
+      <AnimatePresence>
+        {sortedTodos.map((todo) => (
+        <ListItem 
+        key={todo.id}
+        layout 
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        exit={{ opacity: 0, height: 0 }}
+        transition={{
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+        mass: 1
+      }}>
+      <ButtonGroup>
+      <CheckButton 
+        onClick={() => toggleTodo(todo.id)}
+        $done={todo.done}> 
+        &#10003; 
+      </CheckButton>
+
+        {!todo.done && ( 
+      <TrashButton onClick={() => removeTodo(todo.id)}>
+        &#10005; 
+      </TrashButton>
+  )}
+    </ButtonGroup>
+  <Text
+  $completed={todo.done} 
+  onClick={() => toggleTodo(todo.id)}>
+    {todo.text}
+  </Text>
+    </ListItem>
+  ))}
+  </AnimatePresence>
+    </ListWrapper>
+      </ListContainer>
     )
 }
 
